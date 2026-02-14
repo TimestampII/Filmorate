@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorateApp.controller;
 
+import jakarta.validation.Valid;
 import ru.yandex.practicum.filmorateApp.model.Film;
 import ru.yandex.practicum.filmorateApp.validation.FilmValidator;
 
@@ -26,7 +27,7 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film create(@RequestBody Film film) {
+    public Film create(@Valid @RequestBody Film film) {
         log.info("Добавление фильма: {}", film);
 
         try {
@@ -42,7 +43,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film update(@RequestBody Film film) {
+    public Film update(@Valid @RequestBody Film film) {
         log.info("Вносятся изменения в фильм: {}", film);
 
         try {

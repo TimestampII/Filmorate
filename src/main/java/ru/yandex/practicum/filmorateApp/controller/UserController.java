@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorateApp.controller;
 
+import jakarta.validation.Valid;
 import ru.yandex.practicum.filmorateApp.model.User;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorateApp.validation.UserValidator;
@@ -24,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User create(@RequestBody User user) {
+    public User create(@Valid @RequestBody User user) {
         log.info("Добавление пользователя: {}", user);
 
         try {
@@ -42,7 +43,7 @@ public class UserController {
     }
 
     @PutMapping
-    public User update(@RequestBody User user) {
+    public User update(@Valid @RequestBody User user) {
         log.info("Обновление пользователя: {}", user);
 
         try {
