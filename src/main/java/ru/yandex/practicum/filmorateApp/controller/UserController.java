@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorateApp.controller;
 
 import jakarta.validation.Valid;
+import ru.yandex.practicum.filmorateApp.exception.NotFoundException;
 import ru.yandex.practicum.filmorateApp.model.User;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorateApp.validation.UserValidator;
@@ -20,13 +21,13 @@ public class UserController {
 
     @GetMapping
     public Collection<User> findAll() {
-        log.debug("Получен запрос на вывод всех пользователей. Всего пользователей: {}", users.size());
+        log.info("Получен запрос на вывод всех пользователей. Всего пользователей: {}", users.size());
         return users.values();
     }
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        log.info("Добавление пользователя: {}", user);
+        log.debug("Добавление пользователя: {}", user);
 
         try {
             UserValidator.validate(user);
@@ -43,26 +44,24 @@ public class UserController {
     }
 
     @PutMapping
-    public User update(@Valid @RequestBody User user) {
-        log.info("Обновление пользователя: {}", user);
+    public User update(@Valid @RequestBody User user) throws NotFoundException {
+        log.debug("Обновление пользователя: {}", user);
+        UserValidator.validate(user);
 
-        try {
-            UserValidator.validate(user);
-        } catch (Exception e) {
-            log.warn("Ошибка валидации при обновлении пользователя {}; {}", user, e.getMessage());
-            throw e;
-        }
-
-        if (!users.containsKey(user.getId())) {
+        if (!exists(user.getId())) {
             log.warn("Пользователь с таким {} ID не найден при обновлении", user.getId());
-            throw new IllegalArgumentException("Пользователь с таким ID " + user.getId() + " отсутствует");
+            throw new NotFoundException("Пользователь с таким ID " + user.getId() + " отсутствует");
         }
 
         users.put(user.getId(), user);
-        log.debug("Пользователь успешно обновлен: {}" , user);
+        log.debug("Пользователь успешно обновлен: {}", user);
         return user;
 
 
+    }
+
+    private boolean exists(Long userId) {
+        return users.containsKey(userId);
     }
 
     private long getNextUserId() {

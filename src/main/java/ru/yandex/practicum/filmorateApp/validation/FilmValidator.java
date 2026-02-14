@@ -4,12 +4,13 @@ import ru.yandex.practicum.filmorateApp.exception.ValidationException;
 import ru.yandex.practicum.filmorateApp.model.Film;
 
 import java.time.LocalDate;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 public class FilmValidator {
 
+    private static final int MAX_DESCRIPTION_LENGTH = 200;
     private static final LocalDate MIN_RELEASE_DATE =
             LocalDate.of(1895, 12, 28);
 
@@ -17,12 +18,12 @@ public class FilmValidator {
     public static void validate(Film film) throws ValidationException {
         log.info("Начата валидация фильма: {}", film);
 
-        if (film.getName() == null || film.getName().isBlank()) {
+        if (!StringUtils.hasText(film.getName())) {
             log.warn("Ошибка валидации: имя фильма пустое или null: {}", film);
             throw new ValidationException("Поле имя должно быть заполнено");
         }
 
-        if (film.getDescription() != null && film.getDescription().length() > 200) {
+        if (film.getDescription() != null && film.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
             log.warn("Ошибка валидации: описание фильма слишком длинное ({} символов): {}",
                     film.getDescription().length(), film);
             throw new ValidationException("Описание должно быть не больше 200 символов");

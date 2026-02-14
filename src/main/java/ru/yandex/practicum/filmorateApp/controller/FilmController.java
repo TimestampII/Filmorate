@@ -1,7 +1,9 @@
 package ru.yandex.practicum.filmorateApp.controller;
 
 import jakarta.validation.Valid;
+import ru.yandex.practicum.filmorateApp.exception.NotFoundException;
 import ru.yandex.practicum.filmorateApp.model.Film;
+import ru.yandex.practicum.filmorateApp.model.User;
 import ru.yandex.practicum.filmorateApp.validation.FilmValidator;
 
 import java.util.Collection;
@@ -17,18 +19,17 @@ import lombok.extern.slf4j.Slf4j;
 public class FilmController {
 
 
-
     private final Map<Long, Film> films = new HashMap<>();
 
     @GetMapping
     public Collection<Film> findAll() {
-        log.debug("Получен запрос на все фильмы. Всего фильмов: {}", films.size());
+        log.info("Получен запрос на все фильмы. Всего фильмов: {}", films.size());
         return films.values();
     }
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        log.info("Добавление фильма: {}", film);
+        log.debug("Добавление фильма: {}", film);
 
         try {
             FilmValidator.validate(film);
@@ -43,24 +44,22 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film update(@Valid @RequestBody Film film) {
-        log.info("Вносятся изменения в фильм: {}", film);
+    public Film update(@Valid @RequestBody Film film) throws NotFoundException {
+        log.debug("Вносятся изменения в фильм: {}", film);
+        FilmValidator.validate(film);
 
-        try {
-            FilmValidator.validate(film);
-        } catch (Exception e) {
-            log.warn("Ошибка валидации при обновлении фильма {}: {}", film, e.getMessage());
-            throw e;
-        }
-
-        if (!films.containsKey(film.getId())) {
+        if (!exists(film.getId())) {
             log.warn("Фильм с таким {} ID не найден при обновлении", film.getId());
-            throw new IllegalArgumentException("Фильм с таким id " + film.getId() + " отсутствует");
+            throw new NotFoundException("Фильм с таким id " + film.getId() + " отсутствует");
         }
 
         films.put(film.getId(), film);
         log.debug("Фильм найден и изменен: {}", film);
         return film;
+    }
+
+    private boolean exists(Long filmId) {
+       return films.containsKey(filmId);
     }
 
     private long getNextFilmId() {

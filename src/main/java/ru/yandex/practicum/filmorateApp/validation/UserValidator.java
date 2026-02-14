@@ -1,10 +1,11 @@
 package ru.yandex.practicum.filmorateApp.validation;
 
+
 import ru.yandex.practicum.filmorateApp.exception.ValidationException;
 import ru.yandex.practicum.filmorateApp.model.User;
 
 import java.time.LocalDate;
-
+import org.springframework.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -23,7 +24,7 @@ public class UserValidator {
             throw new ValidationException("Логин должен быть указан и не иметь пробелов");
         }
 
-        if (user.getName() == null || user.getName().isBlank()) {
+        if (!StringUtils.hasText(user.getName())) {
             user.setName(user.getLogin());
             log.debug("Имя пользователя не указано. Присвоено имя по логину: {}", user.getName());
         }
