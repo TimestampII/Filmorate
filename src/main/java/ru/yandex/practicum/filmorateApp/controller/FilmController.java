@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorateApp.controller;
 
-import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorateApp.model.Film;
 import ru.yandex.practicum.filmorateApp.validation.FilmValidator;
 
@@ -8,36 +7,58 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
+
+
 
     private final Map<Long, Film> films = new HashMap<>();
 
     @GetMapping
     public Collection<Film> findAll() {
+        log.debug("Получен запрос на все фильмы. Всего фильмов: {}", films.size());
         return films.values();
     }
 
     @PostMapping
     public Film create(@RequestBody Film film) {
+        log.info("Добавление фильма: {}", film);
 
-        FilmValidator.validate(film);
+        try {
+            FilmValidator.validate(film);
+        } catch (Exception e) {
+            log.warn("Ошибка валидации при добавлении фильма {}: {}", film, e.getMessage());
+            throw e;
+        }
         film.setId(getNextFilmId());
         films.put(film.getId(), film);
+        log.debug("Фильм добавлен: {}", film);
         return film;
     }
 
     @PutMapping
     public Film update(@RequestBody Film film) {
+        log.info("Вносятся изменения в фильм: {}", film);
 
-        FilmValidator.validate(film);
+        try {
+            FilmValidator.validate(film);
+        } catch (Exception e) {
+            log.warn("Ошибка валидации при обновлении фильма {}: {}", film, e.getMessage());
+            throw e;
+        }
 
         if (!films.containsKey(film.getId())) {
+            log.warn("Фильм с таким {} ID не найден при обновлении", film.getId());
             throw new IllegalArgumentException("Фильм с таким id " + film.getId() + " отсутствует");
         }
 
         films.put(film.getId(), film);
+        log.debug("Фильм найден и изменен: {}", film);
         return film;
     }
 

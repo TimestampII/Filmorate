@@ -8,6 +8,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -16,27 +19,46 @@ public class UserController {
 
     @GetMapping
     public Collection<User> findAll() {
+        log.debug("Получен запрос на вывод всех пользователей. Всего пользователей: {}", users.size());
         return users.values();
     }
 
     @PostMapping
     public User create(@RequestBody User user) {
+        log.info("Добавление пользователя: {}", user);
 
-        UserValidator.validate(user);
+        try {
+            UserValidator.validate(user);
+        } catch (Exception e) {
+            log.warn("Ошибка валидации при добавлении пользователя {}; {}", user, e.getMessage());
+            throw e;
+        }
+
         user.setId(getNextUserId());
         users.put(user.getId(), user);
+
+        log.debug("Пользователь успешно добавлен: {}", user);
         return user;
     }
 
     @PutMapping
     public User update(@RequestBody User user) {
+        log.info("Обновление пользователя: {}", user);
 
-        UserValidator.validate(user);
+        try {
+            UserValidator.validate(user);
+        } catch (Exception e) {
+            log.warn("Ошибка валидации при обновлении пользователя {}; {}", user, e.getMessage());
+            throw e;
+        }
 
         if (!users.containsKey(user.getId())) {
+            log.warn("Пользователь с таким {} ID не найден при обновлении", user.getId());
             throw new IllegalArgumentException("Пользователь с таким ID " + user.getId() + " отсутствует");
         }
+
         users.put(user.getId(), user);
+        log.debug("Пользователь успешно обновлен: {}" , user);
         return user;
 
 
