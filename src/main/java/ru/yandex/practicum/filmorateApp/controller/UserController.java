@@ -48,7 +48,7 @@ public class UserController {
         log.debug("Обновление пользователя: {}", user);
         UserValidator.validate(user);
 
-        if (!exists(user.getId())) {
+        if (!exists(user)) {
             log.warn("Пользователь с таким {} ID не найден при обновлении", user.getId());
             throw new NotFoundException("Пользователь с таким ID " + user.getId() + " отсутствует");
         }
@@ -60,8 +60,8 @@ public class UserController {
 
     }
 
-    private boolean exists(Long userId) {
-        return users.containsKey(userId);
+    private boolean exists(User user) {
+        return users.containsKey(user.getId());
     }
 
     private long getNextUserId() {

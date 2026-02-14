@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorateApp.controller;
 import jakarta.validation.Valid;
 import ru.yandex.practicum.filmorateApp.exception.NotFoundException;
 import ru.yandex.practicum.filmorateApp.model.Film;
-import ru.yandex.practicum.filmorateApp.model.User;
 import ru.yandex.practicum.filmorateApp.validation.FilmValidator;
 
 import java.util.Collection;
@@ -48,7 +47,7 @@ public class FilmController {
         log.debug("Вносятся изменения в фильм: {}", film);
         FilmValidator.validate(film);
 
-        if (!exists(film.getId())) {
+        if (!exists(film)) {
             log.warn("Фильм с таким {} ID не найден при обновлении", film.getId());
             throw new NotFoundException("Фильм с таким id " + film.getId() + " отсутствует");
         }
@@ -58,8 +57,8 @@ public class FilmController {
         return film;
     }
 
-    private boolean exists(Long filmId) {
-       return films.containsKey(filmId);
+    private boolean exists(Film film) {
+        return films.containsKey(film.getId());
     }
 
     private long getNextFilmId() {
