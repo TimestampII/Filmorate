@@ -26,26 +26,20 @@ public class UserController {
     }
 
     @PostMapping
-    public User create(@Valid @RequestBody User user) {
-        log.debug("Добавление пользователя: {}", user);
-
-        try {
-            UserValidator.validate(user);
-        } catch (Exception e) {
-            log.warn("Ошибка валидации при добавлении пользователя {}; {}", user, e.getMessage());
-            throw e;
-        }
+    public User create(@RequestBody User user) {
+        log.info("Добавление пользователя: {}", user);
+        UserValidator.validate(user);
 
         user.setId(getNextUserId());
         users.put(user.getId(), user);
 
-        log.debug("Пользователь успешно добавлен: {}", user);
+        log.info("Пользователь успешно добавлен: {}", user);
         return user;
     }
 
     @PutMapping
-    public User update(@Valid @RequestBody User user) throws NotFoundException {
-        log.debug("Обновление пользователя: {}", user);
+    public User update(@RequestBody User user) throws NotFoundException {
+        log.info("Обновление пользователя: {}", user);
         UserValidator.validate(user);
 
         if (!exists(user)) {
@@ -54,7 +48,7 @@ public class UserController {
         }
 
         users.put(user.getId(), user);
-        log.debug("Пользователь успешно обновлен: {}", user);
+        log.info("Пользователь успешно обновлен: {}", user);
         return user;
 
 

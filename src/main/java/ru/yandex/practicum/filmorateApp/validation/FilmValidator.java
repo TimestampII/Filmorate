@@ -41,7 +41,7 @@ public class FilmValidator {
             throw new ValidationException("Продолжительность фильма должна быть положительным числом.");
         }
 
-        log.debug("Валидация фильма {} пройдена успешно", film);
+        log.info("Валидация фильма {} пройдена успешно", film);
     }
 }
 

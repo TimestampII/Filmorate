@@ -27,24 +27,19 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film create(@Valid @RequestBody Film film) {
-        log.debug("Добавление фильма: {}", film);
+    public Film create(@RequestBody Film film) {
+        log.info("Добавление фильма: {}", film);
+        FilmValidator.validate(film);
 
-        try {
-            FilmValidator.validate(film);
-        } catch (Exception e) {
-            log.warn("Ошибка валидации при добавлении фильма {}: {}", film, e.getMessage());
-            throw e;
-        }
         film.setId(getNextFilmId());
         films.put(film.getId(), film);
-        log.debug("Фильм добавлен: {}", film);
+        log.info("Фильм добавлен: {}", film);
         return film;
     }
 
     @PutMapping
-    public Film update(@Valid @RequestBody Film film) throws NotFoundException {
-        log.debug("Вносятся изменения в фильм: {}", film);
+    public Film update(@RequestBody Film film) throws NotFoundException {
+        log.info("Вносятся изменения в фильм: {}", film);
         FilmValidator.validate(film);
 
         if (!exists(film)) {
@@ -53,7 +48,7 @@ public class FilmController {
         }
 
         films.put(film.getId(), film);
-        log.debug("Фильм найден и изменен: {}", film);
+        log.info("Фильм найден и изменен: {}", film);
         return film;
     }
 
