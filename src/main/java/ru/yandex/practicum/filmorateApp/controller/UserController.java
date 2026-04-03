@@ -1,70 +1,72 @@
 package ru.yandex.practicum.filmorateApp.controller;
 
-import jakarta.validation.Valid;
-import ru.yandex.practicum.filmorateApp.exception.NotFoundException;
-import ru.yandex.practicum.filmorateApp.model.User;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorateApp.validation.UserValidator;
+import ru.yandex.practicum.filmorateApp.model.User;
+import ru.yandex.practicum.filmorateApp.service.UserService;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    private final Map<Long, User> users = new HashMap<>();
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping
     public Collection<User> findAll() {
-        log.info("Получен запрос на вывод всех пользователей. Всего пользователей: {}", users.size());
-        return users.values();
+        log.info("GET /users");
+        return userService.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public User findById(@PathVariable long id) {
+        log.info("GET /users/{}", id);
+        return userService.findById(id);
     }
 
     @PostMapping
     public User create(@RequestBody User user) {
-        log.info("Добавление пользователя: {}", user);
-        UserValidator.validate(user);
-
-        user.setId(getNextUserId());
-        users.put(user.getId(), user);
-
-        log.info("Пользователь успешно добавлен: {}", user);
-        return user;
+        log.info("POST /users: {}", user);
+        return userService.add(user);
     }
 
     @PutMapping
-    public User update(@RequestBody User user) throws NotFoundException {
-        log.info("Обновление пользователя: {}", user);
-        UserValidator.validate(user);
-
-        if (!exists(user)) {
-            log.warn("Пользователь с таким {} ID не найден при обновлении", user.getId());
-            throw new NotFoundException("Пользователь с таким ID " + user.getId() + " отсутствует");
-        }
-
-        users.put(user.getId(), user);
-        log.info("Пользователь успешно обновлен: {}", user);
-        return user;
-
-
+    public User update(@RequestBody User user) {
+        log.info("PUT /users: {}", user);
+        return userService.update(user);
     }
 
-    private boolean exists(User user) {
-        return users.containsKey(user.getId());
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable long id, @PathVariable long friendId) {
+        log.info("PUT /users/{}/friends/{}", id, friendId);
+        userService.addFriend(id, friendId);
     }
 
-    private long getNextUserId() {
-        return users.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0) + 1;
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void removeFriend(@PathVariable long id, @PathVariable long friendId) {
+        log.info("DELETE /users/{}/friends/{}", id, friendId);
+        userService.removeFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public Collection<User> getFriends(@PathVariable long id) {
+        log.info("GET /users/{}/friends", id);
+        return userService.getFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public Collection<User> getCommonFriends(
+            @PathVariable long id,
+            @PathVariable long otherId) {
+        log.info("GET /users/{}/friends/common/{}", id, otherId);
+        return userService.getCommonFriends(id, otherId);
     }
 }
-
-
