@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorateApp.storage.user;
 
 import ru.yandex.practicum.filmorateApp.model.User;
+
 import java.util.Collection;
 import java.util.Optional;
 
@@ -10,4 +11,8 @@ public interface UserStorage {
     void delete(long id);
     Optional<User> findById(long id);
     Collection<User> findAll();
+    void addFriend(long userId, long friendId);       // управление дружбой — в хранилище
+    void removeFriend(long userId, long friendId);
+    Collection<User> getFriends(long userId);         // выборка друзей — в хранилище
+    Collection<User> getCommonFriends(long userId, long otherId); // фильтрация — в хранилище
 }
