@@ -34,7 +34,7 @@ public class UserValidator {
             throw new ValidationException("Дата рождения не может быть в будущем");
         }
 
-        log.debug("Валидация пользователя {} пройдена успешно", user);
+        log.info("Валидация пользователя {} пройдена успешно", user);
     }
 }
 
