@@ -23,43 +23,43 @@ public class UserController {
     @GetMapping
     public Collection<User> findAll() {
         log.info("GET /users");
-        return userService.findAll();
+        return userService.findAllUsers();
     }
 
     @GetMapping("/{id}")
     public User findById(@PathVariable long id) {
         log.info("GET /users/{}", id);
-        return userService.findById(id);
+        return userService.findByIdUser(id);
     }
 
     @PostMapping
     public User create(@RequestBody User user) {
         log.info("POST /users: {}", user);
-        return userService.add(user);
+        return userService.addUser(user);
     }
 
     @PutMapping
     public User update(@RequestBody User user) {
         log.info("PUT /users: {}", user);
-        return userService.update(user);
+        return userService.updateUser(user);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
     public void addFriend(@PathVariable long id, @PathVariable long friendId) {
         log.info("PUT /users/{}/friends/{}", id, friendId);
-        userService.addFriend(id, friendId);
+        userService.addFriendUser(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
     public void removeFriend(@PathVariable long id, @PathVariable long friendId) {
         log.info("DELETE /users/{}/friends/{}", id, friendId);
-        userService.removeFriend(id, friendId);
+        userService.removeFriendUser(id, friendId);
     }
 
     @GetMapping("/{id}/friends")
     public Collection<User> getFriends(@PathVariable long id) {
         log.info("GET /users/{}/friends", id);
-        return userService.getFriends(id);
+        return userService.getFriendsUser(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
@@ -67,6 +67,6 @@ public class UserController {
             @PathVariable long id,
             @PathVariable long otherId) {
         log.info("GET /users/{}/friends/common/{}", id, otherId);
-        return userService.getCommonFriends(id, otherId);
+        return userService.getCommonFriendsUser(id, otherId);
     }
 }

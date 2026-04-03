@@ -23,56 +23,56 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
-    public User add(User user) {
+    public User addUser(User user) {
         UserValidator.validate(user);
         return userStorage.add(user);
     }
 
-    public User update(User user) {
+    public User updateUser(User user) {
         UserValidator.validate(user);
         userStorage.findById(user.getId())
                 .orElseThrow(() -> new NotFoundException("Пользователь с id=" + user.getId() + " не найден"));
         return userStorage.update(user);
     }
 
-    public User findById(long id) {
+    public User findByIdUser(long id) {
         return userStorage.findById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователь с id=" + id + " не найден"));
     }
 
-    public Collection<User> findAll() {
+    public Collection<User> findAllUsers() {
         return userStorage.findAll();
     }
 
-    public void addFriend(long userId, long friendId) {
-        User user = findById(userId);
-        User friend = findById(friendId); // проверяем существование
+    public void addFriendUser(long userId, long friendId) {
+        User user = findByIdUser(userId);
+        User friend = findByIdUser(friendId); // проверяем существование
         user.getFriends().add(friendId);
         friend.getFriends().add(userId); // дружба взаимная
         log.info("Пользователи {} и {} теперь друзья", userId, friendId);
     }
 
-    public void removeFriend(long userId, long friendId) {
-        User user = findById(userId);       // 404 если userId не существует
-        User friend = findById(friendId);   // 404 если friendId не существует
+    public void removeFriendUser(long userId, long friendId) {
+        User user = findByIdUser(userId);       // 404 если userId не существует
+        User friend = findByIdUser(friendId);   // 404 если friendId не существует
         user.getFriends().remove(friendId);
         friend.getFriends().remove(userId);
         log.info("Пользователи {} и {} больше не друзья", userId, friendId);
     }
 
-    public Collection<User> getFriends(long userId) {
-        User user = findById(userId);
+    public Collection<User> getFriendsUser(long userId) {
+        User user = findByIdUser(userId);
         return user.getFriends().stream()
-                .map(this::findById)
+                .map(this::findByIdUser)
                 .collect(Collectors.toList());
     }
 
-    public Collection<User> getCommonFriends(long userId, long otherId) {
-        Set<Long> userFriends = findById(userId).getFriends();
-        Set<Long> otherFriends = findById(otherId).getFriends();
+    public Collection<User> getCommonFriendsUser(long userId, long otherId) {
+        Set<Long> userFriends = findByIdUser(userId).getFriends();
+        Set<Long> otherFriends = findByIdUser(otherId).getFriends();
         return userFriends.stream()
                 .filter(otherFriends::contains)
-                .map(this::findById)
+                .map(this::findByIdUser)
                 .collect(Collectors.toList());
     }
 }

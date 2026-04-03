@@ -24,44 +24,44 @@ public class FilmService {
         this.userStorage = userStorage;
     }
 
-    public Film add(Film film) {
+    public Film addFilm(Film film) {
         FilmValidator.validate(film);
         return filmStorage.add(film);
     }
 
-    public Film update(Film film) {
+    public Film updateFilm(Film film) {
         FilmValidator.validate(film);
-        getFilmOrThrow(film.getId()); // явная проверка существования перед обновлением
+        getFilmOrThrow(film.getId()); // проверка существования перед обновлением
         return filmStorage.update(film);
     }
 
-    public Film findById(long id) {
+    public Film findByIdFilm(long id) {
         return getFilmOrThrow(id);
     }
 
-    public Collection<Film> findAll() {
+    public Collection<Film> findAllFilm() {
         return filmStorage.findAll();
     }
 
-    public void addLike(long filmId, long userId) {
-        getFilmOrThrow(filmId);   // явная проверка фильма
-        getUserOrThrow(userId);   // явная проверка пользователя
+    public void addLikeFilm(long filmId, long userId) {
+        getFilmOrThrow(filmId);   // проверка фильма
+        getUserOrThrow(userId);   // проверка пользователя
         filmStorage.findById(filmId).get().getLikes().add(userId);
         log.info("Пользователь {} поставил лайк фильму {}", userId, filmId);
     }
 
-    public void removeLike(long filmId, long userId) {
-        getFilmOrThrow(filmId);   // явная проверка фильма
-        getUserOrThrow(userId);   // явная проверка пользователя
+    public void removeLikeFilm(long filmId, long userId) {
+        getFilmOrThrow(filmId);   //  проверка фильма
+        getUserOrThrow(userId);   //  проверка пользователя
         filmStorage.findById(filmId).get().getLikes().remove(userId);
         log.info("Пользователь {} удалил лайк с фильма {}", userId, filmId);
     }
 
-    public Collection<Film> getPopular(int count) {
+    public Collection<Film> getPopularFilm(int count) {
         return filmStorage.getPopular(count); // сортировка — в хранилище
     }
 
-    // явные вспомогательные методы с говорящими именами
+    // вспомогательные методы с говорящими именами
     private Film getFilmOrThrow(long id) {
         return filmStorage.findById(id)
                 .orElseThrow(() -> new NotFoundException("Фильм с id=" + id + " не найден"));
