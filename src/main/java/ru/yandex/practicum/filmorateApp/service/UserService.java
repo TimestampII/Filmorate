@@ -9,8 +9,6 @@ import ru.yandex.practicum.filmorateApp.storage.user.UserStorage;
 import ru.yandex.practicum.filmorateApp.validation.UserValidator;
 
 import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -30,14 +28,12 @@ public class UserService {
 
     public User updateUser(User user) {
         UserValidator.validate(user);
-        userStorage.findById(user.getId())
-                .orElseThrow(() -> new NotFoundException("Пользователь с id=" + user.getId() + " не найден"));
+        getUserOrThrow(user.getId()); // проверка существования перед обновлением
         return userStorage.update(user);
     }
 
     public User findByIdUser(long id) {
-        return userStorage.findById(id)
-                .orElseThrow(() -> new NotFoundException("Пользователь с id=" + id + " не найден"));
+        return getUserOrThrow(id);
     }
 
     public Collection<User> findAllUsers() {
@@ -45,34 +41,32 @@ public class UserService {
     }
 
     public void addFriendUser(long userId, long friendId) {
-        User user = findByIdUser(userId);
-        User friend = findByIdUser(friendId); // проверяем существование
-        user.getFriends().add(friendId);
-        friend.getFriends().add(userId); // дружба взаимная
+        getUserOrThrow(userId);   // проверка обоих пользователей
+        getUserOrThrow(friendId);
+        userStorage.addFriend(userId, friendId); // логика дружбы — в хранилище
         log.info("Пользователи {} и {} теперь друзья", userId, friendId);
     }
 
     public void removeFriendUser(long userId, long friendId) {
-        User user = findByIdUser(userId);       // 404 если userId не существует
-        User friend = findByIdUser(friendId);   // 404 если friendId не существует
-        user.getFriends().remove(friendId);
-        friend.getFriends().remove(userId);
+        getUserOrThrow(userId);   // проверка обоих пользователей
+        getUserOrThrow(friendId);
+        userStorage.removeFriend(userId, friendId); // логика дружбы — в хранилище
         log.info("Пользователи {} и {} больше не друзья", userId, friendId);
     }
 
     public Collection<User> getFriendsUser(long userId) {
-        User user = findByIdUser(userId);
-        return user.getFriends().stream()
-                .map(this::findByIdUser)
-                .collect(Collectors.toList());
+        getUserOrThrow(userId);
+        return userStorage.getFriends(userId); // выборка — в хранилище
     }
 
     public Collection<User> getCommonFriendsUser(long userId, long otherId) {
-        Set<Long> userFriends = findByIdUser(userId).getFriends();
-        Set<Long> otherFriends = findByIdUser(otherId).getFriends();
-        return userFriends.stream()
-                .filter(otherFriends::contains)
-                .map(this::findByIdUser)
-                .collect(Collectors.toList());
+        getUserOrThrow(userId);
+        getUserOrThrow(otherId);
+        return userStorage.getCommonFriends(userId, otherId); // фильтрация — в хранилище
+    }
+
+    private User getUserOrThrow(long id) {
+        return userStorage.findById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователь с id=" + id + " не найден"));
     }
 }
