@@ -47,7 +47,7 @@ public class UserService {
 
         userStorage.addFriend(user.getId(), friend.getId());
 
-        log.info("Пользователь {} добавил в друзья {}", userId, friendId);
+        log.info("Пользователь {} добавил в друзья {}", user.getId(), friend.getId());
     }
 
     public void removeFriend(long userId, long friendId) {
@@ -56,7 +56,7 @@ public class UserService {
 
         userStorage.removeFriend(user.getId(), friend.getId());
 
-        log.info("Пользователь {} удалил из друзей {}", userId, friendId);
+        log.info("Пользователь {} удалил из друзей {}", user.getId(), friend.getId());
     }
 
     public Collection<User> getFriends(long userId) {
