@@ -48,18 +48,18 @@ public class FilmService {
     public void addLike(long filmId, long userId) {
         getFilmByIdOrThrow(filmId);
         getUserByIdOrThrow(userId);
-        filmStorage.findById(filmId).get().getLikes().add(userId);
-        // сохраняем в БД
-        ((ru.yandex.practicum.filmorate.storage.film.FilmDbStorage) filmStorage)
-                .addLike(filmId, userId);
+
+        filmStorage.addLike(filmId, userId);
+
         log.info("Пользователь {} поставил лайк фильму {}", userId, filmId);
     }
 
     public void removeLike(long filmId, long userId) {
         getFilmByIdOrThrow(filmId);
         getUserByIdOrThrow(userId);
-        ((ru.yandex.practicum.filmorate.storage.film.FilmDbStorage) filmStorage)
-                .removeLike(filmId, userId);
+
+        filmStorage.removeLike(filmId, userId);
+
         log.info("Пользователь {} удалил лайк с фильма {}", userId, filmId);
     }
 
@@ -69,11 +69,13 @@ public class FilmService {
 
     private Film getFilmByIdOrThrow(long id) {
         return filmStorage.findById(id)
-                .orElseThrow(() -> new NotFoundException("Фильм с id=" + id + " не найден"));
+                .orElseThrow(() ->
+                        new NotFoundException("Фильм с id=" + id + " не найден"));
     }
 
     private void getUserByIdOrThrow(long id) {
         userStorage.findById(id)
-                .orElseThrow(() -> new NotFoundException("Пользователь с id=" + id + " не найден"));
+                .orElseThrow(() ->
+                        new NotFoundException("Пользователь с id=" + id + " не найден"));
     }
 }

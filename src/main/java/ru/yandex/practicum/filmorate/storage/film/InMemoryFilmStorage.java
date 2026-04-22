@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Component
+@Component("filmInMemoryStorage")
 public class InMemoryFilmStorage implements FilmStorage {
 
     private final Map<Long, Film> films = new HashMap<>();
@@ -17,21 +17,18 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film add(Film film) {
         film.setId(getNextId());
         films.put(film.getId(), film);
-        log.debug("Фильм добавлен: {}", film);
         return film;
     }
 
     @Override
     public Film update(Film film) {
         films.put(film.getId(), film);
-        log.debug("Фильм обновлён: {}", film);
         return film;
     }
 
     @Override
     public void delete(long id) {
         films.remove(id);
-        log.debug("Фильм удалён, id={}", id);
     }
 
     @Override
@@ -41,7 +38,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Collection<Film> findAll() {
-        return films.values();
+        return new ArrayList<>(films.values());
     }
 
     @Override
@@ -52,7 +49,26 @@ public class InMemoryFilmStorage implements FilmStorage {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void addLike(long filmId, long userId) {
+        Film film = films.get(filmId);
+        if (film != null) {
+            film.getLikes().add(userId);
+        }
+    }
+
+    @Override
+    public void removeLike(long filmId, long userId) {
+        Film film = films.get(filmId);
+        if (film != null) {
+            film.getLikes().remove(userId);
+        }
+    }
+
     private long getNextId() {
-        return films.keySet().stream().mapToLong(id -> id).max().orElse(0) + 1;
+        return films.keySet().stream()
+                .mapToLong(Long::longValue)
+                .max()
+                .orElse(0) + 1;
     }
 }

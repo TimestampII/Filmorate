@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface FilmStorage {
+
     Film add(Film film);
 
     Film update(Film film);
@@ -16,5 +17,9 @@ public interface FilmStorage {
 
     Collection<Film> findAll();
 
-    Collection<Film> getPopular(int count); // выборка и сортировка — в хранилище
+    Collection<Film> getPopular(int count);
+
+    void addLike(long filmId, long userId);
+
+    void removeLike(long filmId, long userId);
 }

@@ -150,11 +150,19 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
+    @Override
     public void addLike(long filmId, long userId) {
-        jdbc.update("MERGE INTO film_likes (film_id, user_id) VALUES (?, ?)", filmId, userId);
+        jdbc.update(
+                "INSERT INTO film_likes (film_id, user_id) VALUES (?, ?)",
+                filmId, userId
+        );
     }
 
+    @Override
     public void removeLike(long filmId, long userId) {
-        jdbc.update("DELETE FROM film_likes WHERE film_id=? AND user_id=?", filmId, userId);
+        jdbc.update(
+                "DELETE FROM film_likes WHERE film_id=? AND user_id=?",
+                filmId, userId
+        );
     }
 }
