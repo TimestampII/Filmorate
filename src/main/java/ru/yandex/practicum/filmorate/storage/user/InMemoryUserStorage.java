@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Component
+@Component("inMemoryUserStorage")
 public class InMemoryUserStorage implements UserStorage {
 
     private final Map<Long, User> users = new HashMap<>();
@@ -45,29 +45,36 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public void addFriend(long userId, long friendId) {
-        users.get(userId).getFriends().add(friendId);
-        users.get(friendId).getFriends().add(userId);
-        log.debug("Пользователи {} и {} теперь друзья", userId, friendId);
+    public void addFriend(User user, User friend) {
+        users.get(user.getId()).getFriends().add(friend.getId());
+        users.get(friend.getId()).getFriends().add(user.getId());
+        log.debug("Пользователи {} и {} теперь друзья", user.getId(), friend.getId());
     }
 
     @Override
-    public void removeFriend(long userId, long friendId) {
-        users.get(userId).getFriends().remove(friendId);
-        users.get(friendId).getFriends().remove(userId);
-        log.debug("Пользователи {} и {} больше не друзья", userId, friendId);
+    public void removeFriend(User user, User friend) {
+        users.get(user.getId()).getFriends().remove(friend.getId());
+        users.get(friend.getId()).getFriends().remove(user.getId());
+        log.debug("Пользователи {} и {} больше не друзья", user.getId(), friend.getId());
     }
 
     @Override
-    public Collection<User> getFriends(long userId) {
-        return users.get(userId).getFriends().stream().map(users::get).filter(Objects::nonNull).collect(Collectors.toList());
+    public Collection<User> getFriends(User user) {
+        return users.get(user.getId()).getFriends().stream()
+                .map(users::get)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Collection<User> getCommonFriends(long userId, long otherId) {
-        Set<Long> userFriends = users.get(userId).getFriends();
-        Set<Long> otherFriends = users.get(otherId).getFriends();
-        return userFriends.stream().filter(otherFriends::contains).map(users::get).filter(Objects::nonNull).collect(Collectors.toList());
+    public Collection<User> getCommonFriends(User user, User other) {
+        Set<Long> userFriends = users.get(user.getId()).getFriends();
+        Set<Long> otherFriends = users.get(other.getId()).getFriends();
+        return userFriends.stream()
+                .filter(otherFriends::contains)
+                .map(users::get)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     private long getNextId() {

@@ -95,8 +95,8 @@ class FilmorateApplicationTests {
         User saved1 = userStorage.add(u1);
         User saved2 = userStorage.add(u2);
 
-        userStorage.addFriend(saved1.getId(), saved2.getId());
-        Collection<User> friends = userStorage.getFriends(saved1.getId());
+        userStorage.addFriend(saved1, saved2);              // передаём объекты
+        Collection<User> friends = userStorage.getFriends(saved1);
         assertThat(friends.size()).isEqualTo(1);
     }
 
@@ -115,9 +115,9 @@ class FilmorateApplicationTests {
         User saved1 = userStorage.add(u1);
         User saved2 = userStorage.add(u2);
 
-        userStorage.addFriend(saved1.getId(), saved2.getId());
-        userStorage.removeFriend(saved1.getId(), saved2.getId());
-        Collection<User> friends = userStorage.getFriends(saved1.getId());
+        userStorage.addFriend(saved1, saved2);              // передаём объекты
+        userStorage.removeFriend(saved1, saved2);           // передаём объекты
+        Collection<User> friends = userStorage.getFriends(saved1);
         assertThat(friends.size()).isEqualTo(0);
     }
 
@@ -142,10 +142,9 @@ class FilmorateApplicationTests {
         User s2 = userStorage.add(u2);
         User s3 = userStorage.add(u3);
 
-        userStorage.addFriend(s1.getId(), s3.getId());
-        userStorage.addFriend(s2.getId(), s3.getId());
-
-        Collection<User> common = userStorage.getCommonFriends(s1.getId(), s2.getId());
+        userStorage.addFriend(s1, s3);                     // передаём объекты
+        userStorage.addFriend(s2, s3);
+        Collection<User> common = userStorage.getCommonFriends(s1, s2);
         assertThat(common.size()).isEqualTo(1);
     }
 

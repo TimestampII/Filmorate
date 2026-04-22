@@ -16,11 +16,11 @@ public interface UserStorage {
 
     Collection<User> findAll();
 
-    void addFriend(long userId, long friendId);       // управление дружбой — в хранилище
+    void addFriend(User user, User friend);
 
-    void removeFriend(long userId, long friendId);
+    void removeFriend(User user, User friend);
 
-    Collection<User> getFriends(long userId);         // выборка друзей — в хранилище
+    Collection<User> getFriends(User user);
 
-    Collection<User> getCommonFriends(long userId, long otherId); // фильтрация — в хранилище
+    Collection<User> getCommonFriends(User user, User other);
 }
