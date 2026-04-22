@@ -1,10 +1,11 @@
-package ru.yandex.practicum.filmorateApp.validation;
+package ru.yandex.practicum.filmorate.validation;
 
 
-import ru.yandex.practicum.filmorateApp.exception.ValidationException;
-import ru.yandex.practicum.filmorateApp.model.User;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
+
 import org.springframework.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,7 +35,7 @@ public class UserValidator {
             throw new ValidationException("Дата рождения не может быть в будущем");
         }
 
-        log.debug("Валидация пользователя {} пройдена успешно", user);
+        log.info("Валидация пользователя {} пройдена успешно", user);
     }
 }
 

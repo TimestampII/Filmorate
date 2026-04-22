@@ -1,9 +1,10 @@
-package ru.yandex.practicum.filmorateApp.validation;
+package ru.yandex.practicum.filmorate.validation;
 
-import ru.yandex.practicum.filmorateApp.exception.ValidationException;
-import ru.yandex.practicum.filmorateApp.model.Film;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
@@ -41,7 +42,7 @@ public class FilmValidator {
             throw new ValidationException("Продолжительность фильма должна быть положительным числом.");
         }
 
-        log.debug("Валидация фильма {} пройдена успешно", film);
+        log.info("Валидация фильма {} пройдена успешно", film);
     }
 }
 
